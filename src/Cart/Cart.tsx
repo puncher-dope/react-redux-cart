@@ -1,5 +1,4 @@
 import React from "react";
-
 import { Product } from "../Product/Product";
 import { useAppSelector } from "../redux/hooks";
 import { useGetProductsQuery } from "../redux/productsReducer";
@@ -15,13 +14,16 @@ export function Cart() {
   return (
     <ul className="cart">
       {products.map(product => {
-        const quantity = quantities[product.id] || 0;
-        return (
-          <Product
-            key={product.id}
-            product={{ ...product, quantity }}
-          />
-        );
+        const safeProduct = {
+          id: Number(product.id),
+          name: String(product.name),
+          price: typeof product.price === 'number' ? product.price : 
+                typeof product.price === 'string' ? parseFloat(product.price) || 0 : 0,
+          image: String(product.image),
+          quantity: Number(quantities[product.id] || 0)
+        };
+        
+        return <Product key={safeProduct.id} {...safeProduct} />;
       })}
     </ul>
   );
